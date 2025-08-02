@@ -1,0 +1,84 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+/* Global layout fixes for proper footer positioning */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container-fluid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+/* Fixed footer styles - replaces the problematic absolute positioning */
+.footer {
+  margin-top: auto;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e5e5e5;
+  padding: 1rem 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+
+/* Original navbar brand styles */
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+/* Original link styles */
+a {
+  color: #0077cc;
+}
+
+/* Original button styles */
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+/* Original nav pills styles */
+.nav-pills .nav-link.active,
+.nav-pills .show>.nav-link {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+/* Original border styles */
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* Original box shadow styles */
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+/* Original button styles */
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}

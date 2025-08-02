@@ -1,0 +1,512 @@
+﻿@page
+@using Demo.Models
+@model Demo.Pages.Admin.UsersModel
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-users me-2"></i>User Management
+                        </h4>
+                        <div class="d-flex align-items-center gap-3">
+                            <!-- Filter Input -->
+                            <div class="input-group" style="width: 250px;">
+                                <span class="input-group-text bg-white">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" id="filterInput" class="form-control" placeholder="Search users..."
+                                    title="Filter users by name, email, or mobile">
+                            </div>
+
+                            <!-- Toolbar Actions -->
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-warning btn-sm fw-bold text-dark" id="blockUsers"
+                                    title="Block selected users" data-bs-toggle="tooltip">
+                                    <i class="fas fa-ban me-1"></i>Block
+                                </button>
+                                <button class="btn btn-success btn-sm fw-bold text-white" id="unblockUsers" title="Unblock selected users"
+                                    data-bs-toggle="tooltip">
+                                    <i class="fas fa-unlock"></i>Unblock
+                                </button>
+                                <button class="btn btn-danger btn-sm fw-bold text-white" id="deleteUsers" title="Delete selected users"
+                                    data-bs-toggle="tooltip">
+                                    <i class="fas fa-trash-alt"></i>Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <!-- Status Messages -->
+                    @if (!string.IsNullOrEmpty(Model.Message))
+                    {
+                        <div class="alert alert-success alert-dismissible fade show m-3 mb-0" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@Model.Message
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Error))
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show m-3 mb-0" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>@Model.Error
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" id="usersForm">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="usersTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 50px;" class="text-center">
+                                            <input type="checkbox" id="selectAll" class="form-check-input"
+                                                title="Select/Deselect all users" data-bs-toggle="tooltip" />
+                                        </th>
+                                        <th style="width: 25%;">
+                                            <button type="button"
+                                                class="btn btn-link p-0 text-start fw-bold text-decoration-none"
+                                                onclick="sortTable(1)" title="Sort by name" data-bs-toggle="tooltip">
+                                                Name <i class="fas fa-sort ms-1"></i>
+                                            </button>
+                                        </th>
+                                        <th style="width: 30%;">
+                                            <button type="button"
+                                                class="btn btn-link p-0 text-start fw-bold text-decoration-none"
+                                                onclick="sortTable(2)" title="Sort by email" data-bs-toggle="tooltip">
+                                                Email <i class="fas fa-sort ms-1"></i>
+                                            </button>
+                                        </th>
+                                        <th style="width: 20%;">
+                                            <button type="button"
+                                                class="btn btn-link p-0 text-start fw-bold text-decoration-none"
+                                                onclick="sortTable(3)" title="Sort by last login"
+                                                data-bs-toggle="tooltip">
+                                                Last Login <i class="fas fa-sort ms-1"></i>
+                                            </button>
+                                        </th>
+                                        <th style="width: 15%;" class="text-center">Status</th>
+                                        <th style="width: 10%;" class="text-center">Activity</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    @foreach (var user in Model.Users)
+                                    {
+                                        <tr class="user-row">
+                                            <td class="text-center align-middle">
+                                                <input type="checkbox" class="form-check-input user-checkbox" name="userIds"
+                                                    value="@user.Id" />
+                                            </td>
+                                            <td class="align-middle">
+                                                <div>
+                                                    <strong>@user.Name</strong>
+                                                    @if (!string.IsNullOrEmpty(user.MobileNumber))
+                                                    {
+                                                        <br>
+                                                
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-phone me-1"></i>@user.MobileNumber
+                                                        </small>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <span title="@user.Email" data-bs-toggle="tooltip">@user.Email</span>
+                                            </td>
+                                            <td class="align-middle" data-sort="@user.LastLogin.Ticks">
+                                                <span class="last-login-time"
+                                                    data-login-time="@user.LastLogin.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                                    title="@user.LastLogin.ToString("MMMM dd, yyyy HH:mm:ss")">
+                                                    @GetRelativeTime(user.LastLogin)
+                                                </span>
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                @{
+                                                    var badgeClass = user.Status switch
+                                                    {
+                                                        UserStatus.Active => "bg-success",
+                                                        UserStatus.Blocked => "bg-warning text-dark",
+                                                        UserStatus.Deleted => "bg-danger",
+                                                        _ => "bg-secondary"
+                                                    };
+                                                    var statusIcon = user.Status switch
+                                                    {
+                                                        UserStatus.Active => "fas fa-check-circle",
+                                                        UserStatus.Blocked => "fas fa-ban",
+                                                        UserStatus.Deleted => "fas fa-trash",
+                                                        _ => "fas fa-question-circle"
+                                                    };
+                                                }
+                                                <span class="badge @badgeClass" title="User status: @user.Status"
+                                                    data-bs-toggle="tooltip">
+                                                    <i class="@statusIcon me-1"></i>@user.Status
+                                                </span>
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <div class="activity-chart" data-activity="@GenerateActivityData()"
+                                                    title="User activity chart" data-bs-toggle="tooltip"></div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        @if (!Model.Users.Any())
+                        {
+                            <div class="text-center py-5">
+                                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No users found</h5>
+                                <p class="text-muted">There are no users registered in the system yet.</p>
+                            </div>
+                        }
+                    </form>
+                </div>
+
+                @if (Model.Users.Any())
+                {
+                    <div class="card-footer bg-light">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Total users: <strong>@Model.Users.Count</strong>
+                            | Active: <strong>@Model.Users.Count(u => u.Status == UserStatus.Active)</strong>
+                            | Blocked: <strong>@Model.Users.Count(u => u.Status == UserStatus.Blocked)</strong>
+                            | Deleted: <strong>@Model.Users.Count(u => u.Status == UserStatus.Deleted)</strong>
+                        </small>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Initialize tooltips
+            initializeTooltips();
+
+            // Update relative times every minute
+            setInterval(updateRelativeTimes, 60000);
+
+            // Select all checkbox functionality
+            $('#selectAll').change(function () {
+                var isChecked = $(this).prop('checked');
+                $('.user-checkbox:visible').prop('checked', isChecked);
+                updateActionButtonsState();
+            });
+
+            // Individual checkbox change
+            $(document).on('change', '.user-checkbox', function () {
+                updateSelectAllState();
+                updateActionButtonsState();
+            });
+
+            // Filter functionality with debounce
+            let filterTimeout;
+            $('#filterInput').on('keyup', function () {
+                clearTimeout(filterTimeout);
+                const value = $(this).val().toLowerCase();
+
+                filterTimeout = setTimeout(function () {
+                    filterUsers(value);
+                }, 300);
+            });
+
+            // Activity charts (simple bar representation)
+            $('.activity-chart').each(function () {
+                var bars = '';
+                for (var i = 0; i < 7; i++) {
+                    var height = Math.floor(Math.random() * 20) + 5;
+                    var opacity = Math.random() * 0.7 + 0.3;
+                    bars += `<div style="display:inline-block;width:6px;height:${height}px;background:rgba(0,123,255,${opacity});margin:1px;vertical-align:bottom;border-radius:1px;"></div>`;
+                }
+                $(this).html(bars);
+            });
+
+            // Action button handlers
+            $('#blockUsers').click(function () {
+                performAction('block', '@Url.Page("", "BlockUsers")', 'block');
+            });
+
+            $('#unblockUsers').click(function () {
+                performAction('unblock', '@Url.Page("", "UnblockUsers")', 'unblock');
+            });
+
+            $('#deleteUsers').click(function () {
+                performAction('delete', '@Url.Page("", "DeleteUsers")', 'delete', true);
+            });
+
+            // Initialize button states
+            updateActionButtonsState();
+        });
+
+        function initializeTooltips() {
+            $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
+
+        function updateRelativeTimes() {
+            $('.last-login-time').each(function () {
+                var $this = $(this);
+                var loginTimeStr = $this.data('login-time');
+                var loginTime = new Date(loginTimeStr);
+                var relativeTime = getRelativeTime(loginTime);
+                var fullDateTime = formatFullDateTime(loginTime);
+
+                $this.text(relativeTime);
+                $this.attr('title', fullDateTime);
+            });
+
+            initializeTooltips();
+        }
+
+        function updateSelectAllState() {
+            var totalVisible = $('.user-checkbox:visible').length;
+            var checkedVisible = $('.user-checkbox:visible:checked').length;
+
+            $('#selectAll').prop('indeterminate', checkedVisible > 0 && checkedVisible < totalVisible);
+            $('#selectAll').prop('checked', checkedVisible === totalVisible && totalVisible > 0);
+        }
+
+        function updateActionButtonsState() {
+            var selectedCount = $('.user-checkbox:checked').length;
+            var hasSelection = selectedCount > 0;
+
+            $('#blockUsers, #unblockUsers, #deleteUsers').prop('disabled', !hasSelection);
+
+            if (hasSelection) {
+                $('#blockUsers').attr('title', `Block ${selectedCount} selected user(s)`);
+                $('#unblockUsers').attr('title', `Unblock ${selectedCount} selected user(s)`);
+                $('#deleteUsers').attr('title', `Delete ${selectedCount} selected user(s)`);
+            } else {
+                $('#blockUsers').attr('title', 'Select users to block');
+                $('#unblockUsers').attr('title', 'Select users to unblock');
+                $('#deleteUsers').attr('title', 'Select users to delete');
+            }
+
+            initializeTooltips();
+        }
+
+        function filterUsers(value) {
+            var visibleCount = 0;
+
+            $("#usersTableBody tr").each(function () {
+                var text = $(this).text().toLowerCase();
+                var isVisible = text.indexOf(value) > -1;
+                $(this).toggle(isVisible);
+                if (isVisible) visibleCount++;
+            });
+
+            updateSelectAllState();
+            updateActionButtonsState();
+
+            // Show/hide no results message
+            if (visibleCount === 0 && value !== '') {
+                if ($('#noResultsMessage').length === 0) {
+                    $('#usersTableBody').after(`
+                            <div id="noResultsMessage" class="text-center py-4">
+                                <i class="fas fa-search fa-2x text-muted mb-2"></i>
+                                <h6 class="text-muted">No users found matching "${value}"</h6>
+                                <small class="text-muted">Try adjusting your search criteria</small>
+                            </div>
+                        `);
+                }
+            } else {
+                $('#noResultsMessage').remove();
+            }
+        }
+
+        function performAction(actionName, actionUrl, actionType, requireConfirmation = false) {
+            var selectedCount = $('.user-checkbox:checked').length;
+
+            if (selectedCount === 0) {
+                showToast('warning', `Please select at least one user to ${actionName}.`);
+                return;
+            }
+
+            if (requireConfirmation) {
+                if (!confirm(`Are you sure you want to ${actionName} ${selectedCount} selected user(s)? This action cannot be undone.`)) {
+                    return;
+                }
+            }
+
+            // Show loading state
+            var button = $(`#${actionType}Users`);
+            var originalHtml = button.html();
+            button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Processing...');
+
+            // Submit form
+            $('#usersForm').attr('action', actionUrl).submit();
+        }
+
+        function getRelativeTime(date) {
+            var now = new Date();
+            var diffInSeconds = Math.floor((now - date) / 1000);
+            var diffInMinutes = Math.floor(diffInSeconds / 60);
+            var diffInHours = Math.floor(diffInMinutes / 60);
+            var diffInDays = Math.floor(diffInHours / 24);
+            var diffInWeeks = Math.floor(diffInDays / 7);
+            var diffInMonths = Math.floor(diffInDays / 30);
+            var diffInYears = Math.floor(diffInDays / 365);
+
+            if (diffInSeconds < 60) {
+                return diffInSeconds <= 1 ? 'just now' : diffInSeconds + ' seconds ago';
+            } else if (diffInMinutes < 60) {
+                return diffInMinutes === 1 ? '1 minute ago' : diffInMinutes + ' minutes ago';
+            } else if (diffInHours < 24) {
+                return diffInHours === 1 ? '1 hour ago' : diffInHours + ' hours ago';
+            } else if (diffInDays < 7) {
+                return diffInDays === 1 ? '1 day ago' : diffInDays + ' days ago';
+            } else if (diffInWeeks < 4) {
+                return diffInWeeks === 1 ? '1 week ago' : diffInWeeks + ' weeks ago';
+            } else if (diffInMonths < 12) {
+                return diffInMonths === 1 ? '1 month ago' : diffInMonths + ' months ago';
+            } else {
+                return diffInYears === 1 ? '1 year ago' : diffInYears + ' years ago';
+            }
+        }
+
+        function formatFullDateTime(date) {
+            // Format: "October 12, 2024 15:45:30" like in your screenshot
+            var options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function sortTable(columnIndex) {
+            var table = document.getElementById('usersTable');
+            var tbody = table.querySelector('tbody');
+            var rows = Array.from(tbody.rows);
+
+            var currentSort = table.getAttribute('data-sort-column');
+            var currentDirection = table.getAttribute('data-sort-direction') || 'asc';
+            var newDirection = (currentSort == columnIndex && currentDirection === 'asc') ? 'desc' : 'asc';
+
+            table.setAttribute('data-sort-column', columnIndex);
+            table.setAttribute('data-sort-direction', newDirection);
+
+            rows.sort(function (a, b) {
+                var aVal, bVal;
+
+                if (columnIndex === 3) { // Last Login column
+                    aVal = a.cells[columnIndex].getAttribute('data-sort') || '0';
+                    bVal = b.cells[columnIndex].getAttribute('data-sort') || '0';
+                    return newDirection === 'asc' ? aVal - bVal : bVal - aVal;
+                } else {
+                    aVal = a.cells[columnIndex].textContent.trim().toLowerCase();
+                    bVal = b.cells[columnIndex].textContent.trim().toLowerCase();
+
+                    if (aVal < bVal) return newDirection === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return newDirection === 'asc' ? 1 : -1;
+                    return 0;
+                }
+            });
+
+            // Update sort icons
+            table.querySelectorAll('th i.fas').forEach(icon => {
+                icon.className = 'fas fa-sort ms-1';
+            });
+
+            var sortIcon = table.querySelector(`th:nth-child(${columnIndex + 1}) i.fas`);
+            if (sortIcon) {
+                sortIcon.className = `fas fa-sort-${newDirection === 'asc' ? 'up' : 'down'} ms-1`;
+            }
+
+            tbody.innerHTML = '';
+            rows.forEach(function (row) {
+                tbody.appendChild(row);
+            });
+
+            initializeTooltips();
+        }
+
+        function showToast(type, message) {
+            // Simple toast notification
+            var alertClass = type === 'warning' ? 'alert-warning' : 'alert-info';
+            var icon = type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+
+            var toast = $(`
+                    <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
+                         style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+                        <i class="fas ${icon} me-2"></i>${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `);
+
+            $('body').append(toast);
+
+            setTimeout(function () {
+                toast.alert('close');
+            }, 5000);
+        }
+    </script>
+}
+
+@functions {
+    string GenerateActivityData()
+    {
+        return "sample_activity_data";
+    }
+
+    string GetRelativeTime(DateTime dateTime)
+    {
+        var now = DateTime.UtcNow;
+        var timeSpan = now - dateTime;
+
+        if (timeSpan.TotalSeconds < 60)
+        {
+            var seconds = (int)timeSpan.TotalSeconds;
+            return seconds <= 1 ? "just now" : $"{seconds} seconds ago";
+        }
+        else if (timeSpan.TotalMinutes < 60)
+        {
+            var minutes = (int)timeSpan.TotalMinutes;
+            return minutes == 1 ? "1 minute ago" : $"{minutes} minutes ago";
+        }
+        else if (timeSpan.TotalHours < 24)
+        {
+            var hours = (int)timeSpan.TotalHours;
+            return hours == 1 ? "1 hour ago" : $"{hours} hours ago";
+        }
+        else if (timeSpan.TotalDays < 7)
+        {
+            var days = (int)timeSpan.TotalDays;
+            return days == 1 ? "1 day ago" : $"{days} days ago";
+        }
+        else if (timeSpan.TotalDays < 30)
+        {
+            var weeks = (int)(timeSpan.TotalDays / 7);
+            return weeks == 1 ? "1 week ago" : $"{weeks} weeks ago";
+        }
+        else if (timeSpan.TotalDays < 365)
+        {
+            var months = (int)(timeSpan.TotalDays / 30);
+            return months == 1 ? "1 month ago" : $"{months} months ago";
+        }
+        else
+        {
+            var years = (int)(timeSpan.TotalDays / 365);
+            return years == 1 ? "1 year ago" : $"{years} years ago";
+        }
+    }
+}

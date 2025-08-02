@@ -1,0 +1,334 @@
+/* Professional User Management System Styles - wwwroot/css/site.css */
+
+/* General Layout */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f8f9fa;
+    line-height: 1.6;
+}
+
+.container-fluid {
+    padding: 20px;
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 15px 20px;
+}
+
+.card-body {
+    padding: 0;
+}
+
+.card-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 10px 20px;
+}
+
+/* Table Styling */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    border-top: none;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 15px 12px;
+    vertical-align: middle;
+}
+
+.table td {
+    padding: 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.15s ease-in-out;
+}
+
+/* Header Controls */
+.input-group .form-control {
+    border: 1px solid rgba(255,255,255,0.3);
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.input-group .form-control::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+.input-group .form-control:focus {
+    background-color: white;
+    color: #495057;
+    border-color: rgba(255,255,255,0.5);
+    box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
+}
+
+.input-group-text {
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* Button Styling */
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.5);
+}
+
+.btn-outline-light:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-link {
+    color: #495057;
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    color: #007bff;
+}
+
+/* Checkbox Styling */
+.form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: 4px;
+    transition: all 0.15s ease-in-out;
+}
+
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+/* Badge Styling */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.8em;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.badge.bg-success {
+    background-color: #28a745 !important;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107 !important;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+/* Activity Chart */
+.activity-chart {
+    height: 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 2px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    min-width: 60px;
+}
+
+/* Alert Styling */
+.alert {
+    border: none;
+    border-radius: 6px;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    border-left-color: #28a745;
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-danger {
+    border-left-color: #dc3545;
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.alert-warning {
+    border-left-color: #ffc107;
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Tooltip Styling */
+.tooltip .tooltip-inner {
+    max-width: 300px;
+    font-size: 0.875rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+/* Sort Icons */
+.table th .btn-link i {
+    color: #6c757d;
+    transition: color 0.15s ease-in-out;
+}
+
+.table th .btn-link:hover i {
+    color: #007bff;
+}
+
+/* Loading States */
+.btn .fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 10px;
+    }
+    
+    .card-header .d-flex {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch !important;
+    }
+    
+    .input-group {
+        width: 100% !important;
+    }
+    
+    .btn-group {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 8px 6px;
+    }
+}
+
+/* Professional Form Styling */
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+/* No Results Message */
+#noResultsMessage {
+    color: #6c757d;
+    padding: 2rem;
+}
+
+/* Statistics Footer */
+.card-footer small {
+    font-size: 0.8rem;
+}
+
+.card-footer strong {
+    color: #495057;
+}
+
+/* Navigation Improvements */
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Login/Register Form Styling */
+.needs-validation .form-control:invalid {
+    border-color: #dc3545;
+}
+
+.needs-validation .form-control:valid {
+    border-color: #28a745;
+}
+
+.invalid-feedback {
+    display: block;
+    font-size: 0.875rem;
+    color: #dc3545;
+    margin-top: 0.25rem;
+}
+
+/* Text Alignment */
+.text-center {
+    text-align: center !important;
+}
+
+.text-start {
+    text-align: left !important;
+}
+
+.text-end {
+    text-align: right !important;
+}
+
+/* Professional spacing */
+.gap-3 {
+    gap: 1rem !important;
+}
+
+/* Focus states for accessibility */
+.form-check-input:focus,
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+/* Smooth transitions */
+* {
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}

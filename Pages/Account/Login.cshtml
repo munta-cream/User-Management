@@ -1,0 +1,145 @@
+﻿@* File: Pages/Account/Login.cshtml *@
+@page
+@model Demo.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </h3>
+                    <small>User Management System</small>
+                </div>
+                <div class="card-body p-4">
+                    @if (!string.IsNullOrEmpty(Model.Message))
+                    {
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>@Model.Message
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Error))
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>@Model.Error
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form method="post" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label">
+                                <i class="fas fa-envelope me-1"></i>Email Address
+                            </label>
+                            <input asp-for="Input.Email" type="email" class="form-control" required
+                                placeholder="Enter your email address" title="Please enter a valid email address" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            <div class="invalid-feedback">
+                                Please provide a valid email address.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label">
+                                <i class="fas fa-lock me-1"></i>Password
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="Input.Password" type="password" class="form-control" required
+                                    placeholder="Enter your password" id="passwordInput" title="Enter your password" />
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword"
+                                    title="Show/Hide password" data-bs-toggle="tooltip">
+                                    <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            <div class="invalid-feedback">
+                                Please provide your password.
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input asp-for="Input.RememberMe" type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                <i class="fas fa-clock me-1"></i>Remember me for 30 days
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </button>
+                        </div>
+                    </form>
+
+
+                </div>
+                <div class="card-footer text-center bg-light">
+                    <span class="text-muted">Don't have an account?</span>
+                    <a asp-page="/Account/Register" class="btn btn-link p-0 ms-1">
+                        <i class="fas fa-user-plus me-1"></i>Register here
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            // Initialize tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+
+            // Toggle password visibility
+            $('#togglePassword').click(function () {
+                const password = $('#passwordInput');
+                const icon = $('#togglePasswordIcon');
+
+                if (password.attr('type') === 'password') {
+                    password.attr('type', 'text');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                    $(this).attr('title', 'Hide password');
+                } else {
+                    password.attr('type', 'password');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                    $(this).attr('title', 'Show password');
+                }
+
+                // Update tooltip
+                $(this).tooltip('dispose').tooltip();
+            });
+
+            // Bootstrap form validation
+            (function () {
+                'use strict';
+                window.addEventListener('load', function () {
+                    var forms = document.getElementsByClassName('needs-validation');
+                    Array.prototype.filter.call(forms, function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (form.checkValidity() === false) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+
+            // Auto-dismiss alerts after 10 seconds
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 10000);
+
+            // Focus on email input
+            $('#Input_Email').focus();
+        });
+    </script>
+}
