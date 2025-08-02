@@ -1,0 +1,84 @@
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+/* Global layout fixes for proper footer positioning */
+html[b-pfqa0rsxwm],
+body[b-pfqa0rsxwm] {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body[b-pfqa0rsxwm] {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container-fluid[b-pfqa0rsxwm] {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+main[b-pfqa0rsxwm] {
+  flex: 1;
+}
+
+/* Fixed footer styles - replaces the problematic absolute positioning */
+.footer[b-pfqa0rsxwm] {
+  margin-top: auto;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e5e5e5;
+  padding: 1rem 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+
+/* Original navbar brand styles */
+a.navbar-brand[b-pfqa0rsxwm] {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+/* Original link styles */
+a[b-pfqa0rsxwm] {
+  color: #0077cc;
+}
+
+/* Original button styles */
+.btn-primary[b-pfqa0rsxwm] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+/* Original nav pills styles */
+.nav-pills .nav-link.active[b-pfqa0rsxwm],
+.nav-pills .show>.nav-link[b-pfqa0rsxwm] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+/* Original border styles */
+.border-top[b-pfqa0rsxwm] {
+  border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom[b-pfqa0rsxwm] {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* Original box shadow styles */
+.box-shadow[b-pfqa0rsxwm] {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+/* Original button styles */
+button.accept-policy[b-pfqa0rsxwm] {
+  font-size: 1rem;
+  line-height: inherit;
+}
